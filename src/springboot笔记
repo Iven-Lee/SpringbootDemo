@@ -1,0 +1,53 @@
+springboot是整合spring技术栈的一站式框架
+
+ starter场景启动器
+    1、spring-boot-starter-*：官方提供
+    2、*-spring-boot-starter：第三方提供
+
+ springboot的web项目的pom.xml文件的基本内容
+    1、springboot的父工程：spring-boot-starter-parent
+    2、springboot的GAV坐标
+    3、springboot的编译版本
+    4、springboot框架的web项目的起步依赖：spring-boot-starter-web
+    5、springboot框架的测试的起步依赖：spring-boot-starter-test
+    6、springboot项目打包编译插件：spring-boot-maven-plugin
+
+ java目录下：
+    重点：springboot项目代码必须放到Application类（即主类）所在的同级目录或下级目录
+    main主类，作为SpringBoot项目的启动入口类
+        //springboot核心注解,主要用于开启spring自动配置
+        @SpringBootApplication
+
+ resources目录下：
+    /static：存放静态资源，如图片、CSS、JavaScript 等
+    /templates:存放Web页面的模板文件，例springboot官方推荐的前端模板引擎Thymeleaf，
+                Java 生态下的模板引擎有 Thymeleaf 、Freemaker、Velocity、Beetl（国产)等
+    application.properties/application.yml ：springboot的核心配置文件(.properties文件与.yml文件)
+         用于存放程序的各种依赖模块的配置信息，比如 服务端口，数据库连接配置等
+           （当两种格式的配置文件同时存在使用的是application.properties）
+
+ 多环境的核心配置文件（命名规则：application-环境标识.properties/yml）：
+    将开发环境分为：1、总配置文件：application.properties（用于激活所使用的环境：spring.profiles.active=环境标识）
+                 2、开发环境配置文件(环境标识:dev)：application-dev.properties（配置端口、上下文根）
+                 3、测试环境配置文件(环境标识:test)：application-test.properties（配置端口、上下文根）
+                 4、生产环境配置文件(环境标识:product)：application-product.properties（配置端口、上下文根）
+                 //配置内嵌Tomcat端口号：server.port=8081
+                 //配置项目的上下文根：server.servlet.context-path=/test
+
+ springboot通过核心配置文件（application.properties）给属性赋值：
+    1、简单类型的属性注入（IndexController.java-----say01()）
+        @Controller     ----创建对象注解容器
+        @Value("${配置文件声明的名称}")
+    2、引用类型的属性注入
+        1）、在实现类上（School.java）
+            @Controller
+            @ConfigurationProperties(prefix = "区分同名配置的名称")
+        2）、在引用类上（IndexController.java-----say02()）
+            @Autowired      ----自动注入
+
+
+
+ RESTFul：一种互联网软件架构设计的风格（@PathVariable）
+ （IndexController.java-----say03()）
+    http接口：http://localhost:8080/boot/order?id=1021&status=1
+    采用RESTFul风格则http地址为：http://localhost:8080/boot/order/1021/1
