@@ -44,7 +44,17 @@ springboot是整合spring技术栈的一站式框架
             @ConfigurationProperties(prefix = "区分同名配置的名称")
         2）、在引用类上（IndexController.java-----say02()）
             @Autowired      ----自动注入
-
+//注：
+    1.@Autowired
+        org.springframework.beans.factory.annotation.Autowired
+        SpringBoot项目中常用。简单来说就是引入由Spring容器管理的bean。
+    2.@Resource
+        javax.annotation.Resource
+        作用相当于@Autowired，只不过@Autowired是byType自动注入，而@Resource默认byName自动注入。
+    3.@Reference
+        @Reference是dubbo的注解，也是注入，他一般注入的是分布式的远程服务的对象，需要dubbo配置使用。
+    简单来说他们的区别：
+        @Reference注入的是分布式中的远程服务对象，@Resource和@Autowired注入的是本地spring容器中的对象。
 
 
  RESTFul：一种互联网软件架构设计的风格（@PathVariable）
