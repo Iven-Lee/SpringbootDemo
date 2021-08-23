@@ -125,3 +125,23 @@
     3、参数处理的原理：
         通过参数解析器（HandlerMethodArgumentResolver）对写入的参数进行解析，
         能否解析取决于参数解析器的种类是否支持写入的参数，如果支持就调用参数解析器的resolveArgument方法解析。
+
+
+ 数据响应的处理
+1、返回值解析器原理：
+       返回值处理器（HandlerMethodReturnValueHandler）调用supportsReturnType方法判断返回值类型是否支持，
+    再调用handleReturnValue方法对返回值进行处理，RequestResponseBodyMethodProcessor类可以处理标有@ResponseBody注解的返回值。
+2、SpringMVC支持的返回值：
+    1）、ModelAndView
+    2）、Model
+    3）、View
+    4）、ResponseEntity
+    5）、ResponseBodyEmitter
+    6）、StreamingResponseBody
+    7）、HttpEntity
+    8）、HttpHeaders
+    9）、Callable
+    10）、DeferredResult
+    11）、ListenableFuture
+    12）、CompletionStage
+    13）、WebAsyncTask
