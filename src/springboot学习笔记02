@@ -69,7 +69,7 @@
  springboot的配置文件格式.properties/yml
 ----当两种格式的配置文件同时存在使用的是application.properties
     1、YAML的基本语法
-        1）、key: value；kv之间有空格
+        1）、key: value；----kv之间有空格
         2）、大小写敏感
         3）、使用缩进表示层级关系
         4）、缩进不允许使用tab，只允许空格
@@ -97,27 +97,31 @@
 
 
  springboot的静态资源访问
-1、原理：请求进来，先去找Controller（容器）看能不能处理。不能处理的所有请求又都交给静态资源处理器。
-     静态资源也找不到则响应404页面
-2、改变默认的静态资源路径
-    static-locations：自定义配置静态资源所在路径（即访问前缀,例：/iven/**）
-    static-path-pattern:自定义配置静态资源访问路径（即文件夹）
+    1、原理：请求进来，先去找Controller（容器）看能不能处理。不能处理的所有请求又都交给静态资源处理器。
+         静态资源也找不到则响应404页面
+    2、改变默认的静态资源路径
+        static-locations：自定义配置静态资源所在路径（即访问前缀,例：/iven/**）
+        static-path-pattern:自定义配置静态资源访问路径（即文件夹）
 
- 请求参数处理
-1、REST使用与原理（使用HTTP请求方式动词来表示对资源的操作）
-    1）、@RequestMapping（常用）：支持 Get 请求，也支持 Post 请求
-    2）、@GetMapping（）：RequestMapping和Get请求方法的组合，只支持Get请求，主要用于查询操作
-    3）、@PostMapping（）：RequestMapping和Post请求方法的组合，只支持Post请求，主要用户新增数据
-    4）、@PutMapping（）：RequestMapping和Put请求方法的组合，只支持Put请求，通常用于修改数据
-    5）、@DeleteMapping（）：RequestMapping和Delete请求方法的组合，只支持Delete请求，通常用于删除数据
-    ----Rest原理（表单提交要使用REST的时候）
-           请求页面采用表单提交方式会带上_method=PUT，请求过来时，会被HiddenHttpMethodFilter拦截
-        当请求正常，并且为POST时，会获取到_method的value值（兼容以下请求；PUT.DELETE.PATCH）。
-        通过包装模式requesWrapper下重写的getMethod方法，返回传入的值。
-2、RESTFul：一种互联网软件架构设计的风格
-    1）、@PathVariable（路径变量）
-    2）、@RequestHeader（获取请求头）
-    3）、@RequestParam（获取请求参数）
-    4）、@MatrixVariable（矩阵变量）
-    5）、@CookieValue（获取cookie值）
-    6）、@RequestBody（获取请求体）
+ 请求参数的处理
+    1、REST使用与原理（使用HTTP请求方式动词来表示对资源的操作）
+        1）、@RequestMapping（常用）：支持 Get 请求，也支持 Post 请求
+        2）、@GetMapping（）：RequestMapping和Get请求方法的组合，只支持Get请求，主要用于查询操作
+        3）、@PostMapping（）：RequestMapping和Post请求方法的组合，只支持Post请求，主要用户新增数据
+        4）、@PutMapping（）：RequestMapping和Put请求方法的组合，只支持Put请求，通常用于修改数据
+        5）、@DeleteMapping（）：RequestMapping和Delete请求方法的组合，只支持Delete请求，通常用于删除数据
+        ----Rest原理（表单提交要使用REST的时候）
+               请求页面采用表单提交方式会带上_method=PUT，请求过来时，会被HiddenHttpMethodFilter拦截
+            当请求正常，并且为POST时，会获取到_method的value值（兼容以下请求；PUT.DELETE.PATCH）。
+            通过包装模式requesWrapper下重写的getMethod方法，返回传入的值。
+    2、RESTFul：一种互联网软件架构设计的风格
+        1）、@PathVariable（路径变量）
+        2）、@RequestHeader（获取请求头）
+        3）、@RequestParam（获取请求参数）
+        4）、@MatrixVariable（矩阵变量）
+        5）、@CookieValue（获取cookie值）
+        6）、@RequestBody（获取请求体）
+
+    3、参数处理的原理：
+        通过参数解析器（HandlerMethodArgumentResolver）对写入的参数进行解析，
+        能否解析取决于参数解析器的种类是否支持写入的参数，如果支持就调用参数解析器的resolveArgument方法解析。
