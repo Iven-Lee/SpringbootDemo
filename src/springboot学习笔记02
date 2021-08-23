@@ -1,0 +1,123 @@
+ springboot主类
+    1、主程序所在包及其下面的所有子包里面的组件都会被默认扫描进来
+    2、改变主类的扫描包的路径：
+        1）、@SpringBootApplication(scanBasePackages="com.atguigu")
+        2）、@ComponentScan（指定扫描路径）
+    3、@SpringBootApplication        //springboot核心注解,主要用于开启spring自动配置
+      等同于 @SpringBootConfiguration   //代表当前是一个配置类
+            @EnableAutoConfiguration
+            @ComponentScan("扫描的包路径")   //指定扫描，Spring注解
+
+ springboot的容器功能
+    ----补充：Spring中DI（依赖注入）的实现方式
+           （1）基于XML的DI实现：
+                 在Spring的配置文件中使用<bean>完成属性（set注入与构造注入）赋值。
+           （2）基于注解的DI实现：
+                 在Spring的类上使用注解（@Component），完成属性（@Value与@Autowired）赋值。
+
+  方法一：基于xml配置文件实现DI注入（DI-Bean.xml）
+    1、组件添加：@Configuration（proxyBeanMethods = true/false） ----即Full模式与Lite模式
+        告诉SpringBoot该类为一个配置类 == 配置文件----（spring的IOC基于配置文件xml的DI实现，结合@bean）
+        Full模式和Lite模式是针对spring配置而言的，和xml配置无关。
+        1）、Full模式：
+                当值为True时，用户调用组件注册方法，会由内部代理来指向该类方法，并返回一个单例实例。
+            被称作“Full Mode”,往往用在需要组件依赖时。该特质要求配置类满足CGLIB子类，并且类中的方法不能时final。
+            *1*.标注有@Configuration或者@Configuration(proxyBeanMethods = true)的类被称为Full模式的配置类。
+                ----Full模式总结：单例模式能有效避免Lite模式下的错误。性能没有Lite模式好
+        2）、Lite模式：
+                当值为False时，用户会直接调用该类。多次调用，会导致返回的对象引用不一致。
+            这也被叫做“Lite Mode”，轻量级操作，节约了时间
+            *1*.类上有@Component注解
+            *2*.类上有@ComponentScan注解
+            *3*.类上有@Import注解
+            *4*.类上有@ImportResource注解
+            *5*.类上没有任何注解，但是类中存在@Bean方法
+            *6*.类上有@Configuration(proxyBeanMethods = false)注解
+                ----Lite总结：运行时不用生成CGLIB子类，提高运行性能，降低启动时间，可以作为普通类使用。但是不能声明@Bean之间的依赖
+
+    2、引入外部类或给容器中导入组件：@Import(全类名)   ----全类名=包名+类名
+
+    3、条件装配：@Conditional（）  ----满足Conditional指定的条件，则进行组件注入
+
+    4、配置文件的引入：@ImportResource("classpath:配置文件.xml")：导入spring的配置文件来进行生效
+
+  方法二：基于核心配置文件实现DI注入（application.properties）
+    1、简单类型的属性注入
+        @Controller     ----创建对象注解容器
+        @Value("${配置文件声明的名称}")
+    2、引用类型的属性注入
+        方法一
+            1）、在实现类上
+            @Controller
+            @ConfigurationProperties(prefix = "区分同名配置的名称")
+            2）、在引用类上
+            @Autowired      ----自动注入
+        方法二
+            1）、在实现类上
+            @ConfigurationProperties(prefix = "区分同名配置的名称")
+            2）、在引用类上
+            @EnableConfigurationProperties(实现类名.class)
+                 -----开启对应类的配置绑定功能，把实现类这个组件自动注入到容器中
+
+ springboot的自动配置原理：
+    SpringBoot先加载所有的自动配置类，每个自动配置类按照条件进行生效，默认都会绑定配置文件指定的值
+    即从@ConfigurationPropeties中的xxxProperties.class中找到相关的propeties.class，
+    再在application.properties中进行定制化配置；
+
+
+
+ springboot的配置文件格式.properties/yml
+----当两种格式的配置文件同时存在使用的是application.properties
+    1、YAML的基本语法
+        1）、key: value；kv之间有空格
+        2）、大小写敏感
+        3）、使用缩进表示层级关系
+        4）、缩进不允许使用tab，只允许空格
+        5）、缩进的空格数不重要，只要相同层级的元素左对齐即可
+        6）、'#'表示注释
+        7）、字符串无需加引号，如果要加，''与""表示字符串内容 会被 转义/不转义
+    2、YAML的数据类型
+        1）、字面量：单个的、不可再分的值。date、boolean、string、number、null
+            k: v
+        2）、对象：键值对的集合。map、hash、set、object
+            行内写法：  k: {k1:v1,k2:v2,k3:v3}
+            #或
+            k:
+              k1: v1
+              k2: v2
+              k3: v3
+        3）、数组：一组按次序排列的值。array、list、queue
+            行内写法：  k: [v1,v2,v3]
+            #或者
+            k:
+             - v1
+             - v2
+             - v3
+
+
+
+ springboot的静态资源访问
+1、原理：请求进来，先去找Controller（容器）看能不能处理。不能处理的所有请求又都交给静态资源处理器。
+     静态资源也找不到则响应404页面
+2、改变默认的静态资源路径
+    static-locations：自定义配置静态资源所在路径（即访问前缀,例：/iven/**）
+    static-path-pattern:自定义配置静态资源访问路径（即文件夹）
+
+ 请求参数处理
+1、REST使用与原理（使用HTTP请求方式动词来表示对资源的操作）
+    1）、@RequestMapping（常用）：支持 Get 请求，也支持 Post 请求
+    2）、@GetMapping（）：RequestMapping和Get请求方法的组合，只支持Get请求，主要用于查询操作
+    3）、@PostMapping（）：RequestMapping和Post请求方法的组合，只支持Post请求，主要用户新增数据
+    4）、@PutMapping（）：RequestMapping和Put请求方法的组合，只支持Put请求，通常用于修改数据
+    5）、@DeleteMapping（）：RequestMapping和Delete请求方法的组合，只支持Delete请求，通常用于删除数据
+    ----Rest原理（表单提交要使用REST的时候）
+           请求页面采用表单提交方式会带上_method=PUT，请求过来时，会被HiddenHttpMethodFilter拦截
+        当请求正常，并且为POST时，会获取到_method的value值（兼容以下请求；PUT.DELETE.PATCH）。
+        通过包装模式requesWrapper下重写的getMethod方法，返回传入的值。
+2、RESTFul：一种互联网软件架构设计的风格
+    1）、@PathVariable（路径变量）
+    2）、@RequestHeader（获取请求头）
+    3）、@RequestParam（获取请求参数）
+    4）、@MatrixVariable（矩阵变量）
+    5）、@CookieValue（获取cookie值）
+    6）、@RequestBody（获取请求体）

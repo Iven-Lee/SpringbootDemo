@@ -61,3 +61,8 @@ springboot是整合spring技术栈的一站式框架
  （IndexController.java-----say03()）
     http接口：http://localhost:8080/boot/order?id=1021&status=1
     采用RESTFul风格则http地址为：http://localhost:8080/boot/order/1021/1
+    例：
+    @RequestMapping(value = "/three/{a}/{b}")
+        public @ResponseBody String say03(@PathVariable("a") Integer a,
+                                          @PathVariable("b") Integer b) {
+            return "id编号为："+a+"-----年龄为："+b; }
